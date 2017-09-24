@@ -7,29 +7,66 @@
     android:layout_height="match_parent"
     tools:context="com.example.savannah.lab1.MainActivity">
 
-    <EditText
-        android:id="@+id/username"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/account_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginBottom="4dp"
-        android:hint="Username"/>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/account_label" />
+
+    <TextView
+        android:id="@+id/username_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/account_button"
+        android:text="@string/username_label"/>
 
     <EditText
-        android:id="@+id/passwd"
+        android:id="@+id/username_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/username_textview"
+        android:hint="handle"/>
+
+    <TextView
+        android:id="@+id/full_name_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/username_edittext"
+        android:text="@string/full_name_label"/>
+
+    <EditText
+        android:id="@+id/full_name_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/full_name_textview"
+        android:hint="full name" />
+
+    <TextView
+        android:id="@+id/password_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/full_name_edittext"
+        android:text="@string/password_label"/>
+
+    <EditText
+        android:id="@+id/password_edittext"
         android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginBottom="16dp"
+        android:layout_below="@id/password_textview"
         android:fontFamily="sans-serif"/>
 
+    <TextView
+        android:id="@+id/photo_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/password_edittext"
+        android:text="@string/picture_label"/>
+
     <Button
-        android:id="@+id/button_save"
+        android:id="@+id/save_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
