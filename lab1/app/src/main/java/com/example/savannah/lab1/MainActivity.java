@@ -2,6 +2,7 @@ package com.example.savannah.lab1;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 /**
  *   This activity holds the bulk of the UI for creating a user profile
@@ -14,5 +15,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
+
+    // Lifecycle instrumentation
+    @Override protected void onStart(){
+        Log.d("CYCLE", "onStart");
+        super.onStart();
+    }
+
+    @Override protected void onResume(){
+        Log.d("CYCLE", "onResume");
+        super.onResume();
+    }
+
+    @Override protected void onPause(){
+        Log.d("CYCLE", "onPause");
+        super.onPause();
+    }
+
+    @Override protected void onStop(){
+        Log.d("CYCLE", "onStop");
+        super.onStop();
+    }
+
+    @Override protected void onDestroy(){
+        Log.d("CYCLE", "onDestroy");
+        super.onDestroy();
     }
 }
