@@ -101,7 +101,9 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="23dp"
-        android:text="SAVE" />
+        android:text="SAVE"
+        android:onClick="onSaveClicked"/>
+
 
     <!--<ImageButton
         android:id="@+id/imageButton"
