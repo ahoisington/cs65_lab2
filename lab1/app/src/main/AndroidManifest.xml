@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.savannah.lab1">
 
+    <!--Request permission  to use camera -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <!--App requires camera, so restrict app's visibility to devices with camera in Google Play -->
+    <uses-feature android:name="android.hardware.camera.front" android:required="true"/>
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AuthActivity" android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"/>
+        <!--<activity android:name=".AuthActivity" android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"/> -->
     </application>
 
 </manifest>

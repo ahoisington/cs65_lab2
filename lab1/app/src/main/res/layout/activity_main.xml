@@ -41,6 +41,7 @@
 
     <EditText
         android:id="@+id/username_edittext"
+        android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/save_button"
@@ -59,6 +60,7 @@
 
     <EditText
         android:id="@+id/full_name_edittext"
+        android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/full_name_textview"
@@ -84,15 +86,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/password_edittext"
-        android:text="@string/picture_label"/>
+        android:text="@string/picture_label" />
 
     <ImageView
         android:id="@+id/photo"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_below="@id/photo_textview"
-        android:layout_centerHorizontal="true"
-        app:srcCompat="@drawable/jigglypuff"/>
+        android:layout_toEndOf="@id/photo_textview"
+        android:layout_toRightOf="@id/photo_textview"
+        app:srcCompat="@drawable/jigglypuff" />
+
+    <ImageButton
+        android:id="@+id/cam_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/photo_textview"
+        android:onClick="camButtonClicked"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
 
     <Button
         android:id="@+id/save_button"
@@ -103,17 +114,6 @@
         android:layout_marginBottom="23dp"
         android:text="SAVE"
         android:onClick="onSaveClicked"/>
-
-
-    <!--<ImageButton
-        android:id="@+id/imageButton"
-        android:layout_centerHorizontal="true"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_below="@+id/photo_textview"
-        android:layout_below="@+id/save_button"
-        app:srcCompat="@drawable/jigglypuff"/>
-    android:onClick="authEntryDone" ^ should go in Button-->
 
 
 </android.widget.RelativeLayout>
