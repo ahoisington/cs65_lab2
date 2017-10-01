@@ -58,23 +58,29 @@ public class MainActivity extends AppCompatActivity {
     public static String SHARED_PREF = "my_sharedpref"; // where we are storing profile text
     public String mInstance = "";
 
+    /********************************** Activity Lifecycle *******************************/
     // get camera permissions, initialize, and restore shared preferences
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Check if we have permission to access camera
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            // we don't have permission. ask for permission and show permissions dialog
-            Log.d("PERM", "requesting permission");
-
-            ActivityCompat.requestPermissions( this,
-                    new String[]{Manifest.permission.CAMERA},
-                    REQUEST_IMAGE_CAPTURE);
+        // save instance state if not null
+        if (savedInstanceState != null){
+            mInstance = savedInstanceState.getString("state");
         }
 
+        Log.d("TAG", ""+mInstance);
+
+    }
+
+    // check permissions and initialize views
+    @Override protected void onStart(){
+        Log.d("CYCLE", "onStart");
+        super.onStart();
+
+        // check permissions
+        checkPermissions();
 
         // initialize toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -96,13 +102,45 @@ public class MainActivity extends AppCompatActivity {
         fullName.setText(sp.getString("fullName","")); // get handle from sp and display it
         password.setText(sp.getString("password","")); // get handle from sp and display it
 
-        // save instance state if not null
-        if (savedInstanceState != null){
-            mInstance = savedInstanceState.getString("state");
+    }
+
+
+    @Override protected void onResume(){
+        Log.d("CYCLE", "onResume");
+        super.onResume();
+    }
+
+    @Override protected void onPause(){
+        Log.d("CYCLE", "onPause");
+        super.onPause();
+    }
+
+    @Override protected void onStop(){
+        Log.d("CYCLE", "onStop");
+        super.onStop();
+
+    }
+
+    @Override protected void onDestroy(){
+        Log.d("CYCLE", "onDestroy");
+        super.onDestroy();
+    }
+
+
+    /*********************** Camera permissions *********************/
+
+    // called in onStart
+    protected void checkPermissions(){
+        // Check if we have permission to access camera
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // we don't have permission. ask for permission and show permissions dialog
+            Log.d("PERM", "requesting permission");
+
+            ActivityCompat.requestPermissions( this,
+                    new String[]{Manifest.permission.CAMERA},
+                    REQUEST_IMAGE_CAPTURE);
         }
-
-        Log.d("TAG", ""+mInstance);
-
     }
 
     // Shows toast saying whether camera permission was granted or not
@@ -280,32 +318,5 @@ public class MainActivity extends AppCompatActivity {
         onSaveClickedSP(v);
     }
 
-    /********************************** Activity Lifecycle *******************************/
-    @Override protected void onStart(){
-        Log.d("CYCLE", "onStart");
-        super.onStart();
-    }
 
-
-    @Override protected void onResume(){
-        Log.d("CYCLE", "onResume");
-        super.onResume();
-        //loadSavedData();
-    }
-
-    @Override protected void onPause(){
-        Log.d("CYCLE", "onPause");
-        super.onPause();
-    }
-
-    @Override protected void onStop(){
-        Log.d("CYCLE", "onStop");
-        super.onStop();
-
-    }
-
-    @Override protected void onDestroy(){
-        Log.d("CYCLE", "onDestroy");
-        super.onDestroy();
-    }
 }
