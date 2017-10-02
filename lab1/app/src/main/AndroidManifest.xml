@@ -9,8 +9,14 @@
     <!--App requires camera, so restrict app's visibility to devices with camera in Google Play -->
     <uses-feature android:name="android.hardware.camera.front" android:required="true"/>
 
+    <!-- App and cropping -->
+    <uses-feature android:name='android.hardware.camera'/>
+
     <!--Request permission to store to external storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+
+
 
     <application
         android:allowBackup="true"
@@ -27,6 +33,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".AuthActivity" android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"/>
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
+
         <!--<activity android:name=".AuthActivity" android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"/> -->
     </application>
 
