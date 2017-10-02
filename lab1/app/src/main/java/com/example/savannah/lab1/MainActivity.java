@@ -66,11 +66,60 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
 
         // save instance state if not null
         if (savedInstanceState != null){
             mInstance = savedInstanceState.getString("state");
         }
+        
+        final Button accountBtn = (Button) findViewById(R.id.account_button);
+        accountBtn.setEnabled(true);
+        final Button clearBtn = (Button) findViewById(R.id.clear_button);
+
+
+        handle.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                accountBtn.setEnabled(false);
+                accountBtn.setClickable(false);
+                accountBtn.setVisibility(View.INVISIBLE);
+                clearBtn.setEnabled(true);
+                clearBtn.setClickable(true);
+            }
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
+            @Override
+             public void afterTextChanged(Editable string) {}
+        });
+        fullName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                accountBtn.setEnabled(false);
+                accountBtn.setClickable(false);
+                accountBtn.setVisibility(View.INVISIBLE);
+                clearBtn.setEnabled(true);
+                clearBtn.setClickable(true);
+            }
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
+            @Override
+            public void afterTextChanged(Editable string) {}
+        });
+        password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                accountBtn.setEnabled(false);
+                accountBtn.setClickable(false);
+                accountBtn.setVisibility(View.INVISIBLE);
+                clearBtn.setEnabled(true);
+                clearBtn.setClickable(true);
+            }
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
+            @Override
+            public void afterTextChanged(Editable string) {}
+        });
 
         Log.d("TAG", ""+mInstance);
 
