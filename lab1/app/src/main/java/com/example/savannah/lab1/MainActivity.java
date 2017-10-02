@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
         if( photoBitmap != null)
             photoImageView.setImageBitmap(photoBitmap);
 
-        System.out.println("before shared prefs " + handle.getText());
 
         //Restore preferences
         SharedPreferences sp = getSharedPreferences(SHARED_PREF, 0); // get settings
@@ -103,10 +102,9 @@ public class MainActivity extends AppCompatActivity {
         fullName.setText(sp.getString("fullName","")); // get handle from sp and display it
         password.setText(sp.getString("password","")); // get handle from sp and display it
 
-        System.out.println("after shared prefs " + handle.getText());
     }
 
-    // check permsissions
+    // check permissions
     @Override protected void onResume(){
         Log.d("CYCLE", "onResume");
         super.onResume();
@@ -171,30 +169,6 @@ public class MainActivity extends AppCompatActivity {
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-    }
-
-
-    /********* keeps phone flipping from messing up ImageView **********/
-
-
-    // invoked when the activity may be temporarily destroyed, save the instance state here
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        // call superclass to save any view hierarchy
-        super.onSaveInstanceState(outState);
-
-        // save the bitmap
-        Log.d("STATE", "onSaveState");
-        outState.putParcelable("IMG", photoBitmap);
-    }
-
-    // retrieve data (from onSaveInstanceState) after activity is restored
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        Log.d("STATE", "onRestoreState");
-        photoBitmap = savedInstanceState.getParcelable("IMG");
-        photoImageView.setImageBitmap(photoBitmap);
     }
 
 
