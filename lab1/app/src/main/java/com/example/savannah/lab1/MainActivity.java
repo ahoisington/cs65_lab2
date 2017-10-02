@@ -42,13 +42,13 @@ import java.io.InputStreamReader;
 public class MainActivity extends AppCompatActivity {
 
     // for photo
-    Bitmap photoBitmap;
-    ImageView photoImageView;
+    private Bitmap photoBitmap;
+    private ImageView photoImageView;
 
     // for text entered
-    public EditText handle;
-    public EditText fullName;
-    public EditText password;
+    private EditText handle;
+    private EditText fullName;
+    private EditText password;
 
     // for storage
     // public static String INTERNAL_FILE = "internal-file"; // where we're storing picture
@@ -81,6 +81,17 @@ public class MainActivity extends AppCompatActivity {
         Log.d("CYCLE", "onStart");
         super.onStart();
 
+    }
+
+    // check permissions
+    @Override
+    protected void onResume(){
+        Log.d("CYCLE", "onResume");
+        super.onResume();
+
+        // check permissions
+        checkPermissions();
+
         // initialize toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar); // sets toolbar as the app bar for the activity
@@ -89,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         handle = (EditText) findViewById(R.id.username_edittext);
         fullName = (EditText) findViewById(R.id.full_name_edittext);
         password = (EditText) findViewById(R.id.password_edittext);
+
 
         // initialize photo stuff so we can clear it later
         photoImageView = findViewById(R.id.photo);
@@ -101,16 +113,6 @@ public class MainActivity extends AppCompatActivity {
         handle.setText(sp.getString("handle","")); // get handle from sp and display it
         fullName.setText(sp.getString("fullName","")); // get handle from sp and display it
         password.setText(sp.getString("password","")); // get handle from sp and display it
-
-    }
-
-    // check permissions
-    @Override protected void onResume(){
-        Log.d("CYCLE", "onResume");
-        super.onResume();
-
-        // check permissions
-        checkPermissions();
 
     }
 
@@ -172,6 +174,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /********* keeps phone flipping from messing up ImageView **********/
+
+
+    // Comment out the following two functions and see what happens
+    //   with the ImageView after you flip the phone's orientation.
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // save the bitmap
+        Log.d("STATE", "onSaveState");
+        outState.putParcelable("IMG", photoBitmap);
+        super.onSaveInstanceState(outState);
+    }
+
+    // see above
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.d("STATE", "onRestoreState");
+        if (savedInstanceState != null){
+            photoBitmap = savedInstanceState.getParcelable("IMG");
+            if(photoBitmap != null && photoImageView != null) {
+                photoImageView.setImageBitmap(photoBitmap);
+            }
+        }
+    }
+
+
     /******************** Taking photo ********************/
     // takes photo when camera button clicked
     // The Android Camera application encodes the photo in the return Intent delivered to
@@ -195,8 +224,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            photoImageView.setImageBitmap(imageBitmap);
+            photoBitmap = (Bitmap) extras.get("data");
+            photoImageView.setImageBitmap(photoBitmap);
         }
     }
 
