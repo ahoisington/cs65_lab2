@@ -15,8 +15,12 @@ package com.example.savannah.lab1;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -35,13 +39,14 @@ import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -49,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
     // for photo
     private Bitmap photoBitmap;
     private ImageView photoImageView;
+    String mCurrentPhotoPath;
+    static final int REQUEST_TAKE_PHOTO = 1;
+
 
     // for text entered
     private EditText handle;
@@ -172,15 +180,27 @@ public class MainActivity extends AppCompatActivity {
         // initialize toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar); // sets toolbar as the app bar for the activity
-/*
-        // initialize text fields so if we want to, we can clear them later
-        handle = (EditText) findViewById(R.id.username_edittext);
-        fullName = (EditText) findViewById(R.id.full_name_edittext);
-        password = (EditText) findViewById(R.id.password_edittext);
 
-*/
         // initialize photo stuff so we can clear it later
-        photoImageView = findViewById(R.id.photo);
+        photoImageView = (ImageView) findViewById(R.id.photo);
+
+        if(photoImageView != null){
+            // check if pic exists
+            File path = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            if (path != null) {
+                File file = new File(path, "Pic.jpg");
+                 // file exists
+                BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+                photoBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+                photoImageView.setImageBitmap(photoBitmap);
+            } else{ // set to default pic
+                photoImageView.setImageResource(android.R.drawable.ic_menu_camera);
+            }
+
+        }
+
+
+
         if( photoBitmap != null)
             photoImageView.setImageBitmap(photoBitmap);
 
@@ -279,6 +299,19 @@ public class MainActivity extends AppCompatActivity {
 
 
     /******************** Taking photo ********************/
+
+    // returns name of photo file
+    private File createImageFile() throws IOException {
+        // Create an image file name
+
+        File path = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File file = new File(path, "Pic.jpg");
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = file.getAbsolutePath();
+        return file;
+    }
+
     // takes photo when camera button clicked
     // The Android Camera application encodes the photo in the return Intent delivered to
     // onActivityResult() as a small Bitmap in the extras, under the key "data".
@@ -290,8 +323,23 @@ public class MainActivity extends AppCompatActivity {
         * prevents app from crashing when nothing can handle the intent in startActivityForResult()
         */
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Call to start external activity & handling image data when focus returns to main activity
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            // create file where photo should go
+            File photoFile = null;
+            try{
+                photoFile = createImageFile();
+            } catch (IOException ex){
+                // error occured while creating file
+            }
+
+            // continue only if File was successfully created
+            if (photoFile != null){
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.android.fileprovider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                // Call to start external activity & handling image data
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+
         }
     }
 
@@ -299,16 +347,32 @@ public class MainActivity extends AppCompatActivity {
     // Get the image back from the camera, displays photo (a Bitmap) in ImageView.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            photoBitmap = (Bitmap) extras.get("data");
-            photoImageView.setImageBitmap(photoBitmap);
+        /*
+         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+             //Bundle extras = data.getExtras();
+             Uri imageUri = data.getData();
+             if (imageUri != null){
+                 try {
+                     photoBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }
+                 //photoImageView.setImageURI(imageUri);
+                 photoImageView.setImageBitmap(photoBitmap);
+                 //photoImageView.setImageBitmap(BitmapFactory.decodeFile(imageUr));
+             }
+
         }
+        */
+
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            setPic();
+        }
+
 
         if (requestCode == ACTIVITY_REQ_CODE) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                //String name = data.getStringExtra("USERNAME");
                 String pass = data.getStringExtra("PASSWORD");
 
                 Toast.makeText(this, "Got " + pass,
@@ -316,6 +380,30 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
+    }
+
+    private void setPic(){
+        // Get the dimensions of the View
+        int targetW = photoImageView.getWidth();
+        int targetH = photoImageView.getHeight();
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        photoBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        photoImageView.setImageBitmap(photoBitmap);
     }
 
     /******** Activity dialog  ********/
