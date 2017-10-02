@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                 accountBtn.setVisibility(View.INVISIBLE);
                 clearBtn.setEnabled(true);
                 clearBtn.setClickable(true);
+                clearBtn.setVisibility(View.VISIBLE);
             }
             @Override
             public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
