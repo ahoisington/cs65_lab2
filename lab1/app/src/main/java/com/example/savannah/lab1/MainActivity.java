@@ -120,6 +120,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable string) {}
         });
+        
+        //dialog box pops up 
+        password.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    showDialog(PASSWORD_AUTH_DIALOG_ID);
+                }
+            }
+        });
 
         Log.d("TAG", ""+mInstance);
 
