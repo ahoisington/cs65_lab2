@@ -20,8 +20,11 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -37,6 +40,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -60,13 +65,23 @@ public class MainActivity extends AppCompatActivity {
     //private static final int REQUEST_EXTERNAL_STORAGE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1; // used to take pic, when cam button clicked
 
+    // for activity dialog box
+    private int ACTIVITY_REQ_CODE = 1001;
+
+
+
+
     /********************** Activity Lifecycle ***************************/
     // get camera permissions, initialize, and restore shared preferences
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+
+        // initialize text fields so if we want to, we can clear them later
+        handle = (EditText) findViewById(R.id.username_edittext);
+        fullName = (EditText) findViewById(R.id.full_name_edittext);
+        password = (EditText) findViewById(R.id.password_edittext);
 
         // save instance state if not null
         if (savedInstanceState != null){
@@ -78,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         final Button clearBtn = (Button) findViewById(R.id.clear_button);
 
 
+        // disabling "i have an account" button, enabling clear button upon text entry
         handle.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -121,8 +137,9 @@ public class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable string) {}
         });
         
-        //dialog box pops up 
-        password.setOnFocusChangeListener(new OnFocusChangeListener() {
+        //dialog box pops up
+        /*
+        password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (!hasFocus) {
@@ -130,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        */
 
         Log.d("TAG", ""+mInstance);
 
@@ -154,13 +172,13 @@ public class MainActivity extends AppCompatActivity {
         // initialize toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar); // sets toolbar as the app bar for the activity
-
+/*
         // initialize text fields so if we want to, we can clear them later
         handle = (EditText) findViewById(R.id.username_edittext);
         fullName = (EditText) findViewById(R.id.full_name_edittext);
         password = (EditText) findViewById(R.id.password_edittext);
 
-
+*/
         // initialize photo stuff so we can clear it later
         photoImageView = findViewById(R.id.photo);
         if( photoBitmap != null)
@@ -277,8 +295,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Get the image back from the camera application
-    // Retrieves and displays photo (a Bitmap) in an ImageView.
+    /****** Handling photo and dialog activities ******/
+    // Get the image back from the camera, displays photo (a Bitmap) in ImageView.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
@@ -286,7 +304,26 @@ public class MainActivity extends AppCompatActivity {
             photoBitmap = (Bitmap) extras.get("data");
             photoImageView.setImageBitmap(photoBitmap);
         }
+
+        if (requestCode == ACTIVITY_REQ_CODE) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                String name = data.getStringExtra("USERNAME");
+                String pass = data.getStringExtra("PASSWORD");
+
+                Toast.makeText(this, "Got " + name + "/" + pass,
+                        Toast.LENGTH_LONG).show();
+
+            }
+        }
     }
+
+    /******** Activity dialog  ********/
+    public void showAuthActivity(View view) {
+        Intent i = new Intent(this, AuthActivity.class);
+        startActivityForResult(i, ACTIVITY_REQ_CODE);
+    }
+
 
     /***************** Saving Profile *********************/
     // save button was clicked. validate fields and save entered information
@@ -312,72 +349,6 @@ public class MainActivity extends AppCompatActivity {
         editor.commit(); // commit the changes to shared prefs
 
     }
-
-
-    /*
-    // saving picture to internal storage, in a file
-    public void onSaveClickedIS(View v) {
-
-        FileOutputStream fos = null;
-        try {
-            fos = openFileOutput(INTERNAL_FILE, Context.MODE_PRIVATE);
-            fos.write(handle.getText().toString().getBytes());
-            //fos.write(mEditText.getText().toString().getBytes());
-            fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    // load picture from internal storage
-    public void loadSavedData() {
-
-        FileInputStream fis = null;
-        try {
-            fis = openFileInput(INTERNAL_FILE);
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null ){
-                sb.append(line);
-            }
-            handle.setText(sb.toString());
-            //mEditText.setText(sb.toString());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
-    public void onLoadClickedIS(View v) {
-
-        FileInputStream fis = null;
-        try {
-            fis = openFileInput(INTERNAL_FILE);
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null ){
-                sb.append(line);
-            }
-            handle.setText(sb.toString());
-            //mEditText.setText(sb.toString());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-    */
 
 
     /******************** Clearing Profile ********************/

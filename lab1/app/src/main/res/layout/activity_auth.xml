@@ -1,6 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <ImageView
+        android:src="@drawable/header_logo"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:scaleType="center"
+        android:background="#FFFFBB33"
+        android:contentDescription="dialog box"
+       />
+    <!--
+     android:inputType textEmailAddress & textPassword result
+               in Google's suggestions to autofill save these
+
+            android:inputType="textEmailAddress"
+            android:inputType="textPassword"
+
+            android:hint="Password"  also causes auto-fill to pop up!
+
+    -->
+
+    <EditText
+        android:id="@+id/passwd"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif"
+        android:hint="confirm password"/>
+
+    <Button
+        android:id="@+id/button_done"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="authEntryDone"
+        android:text="DONE"/>
+    <!--
+     This layout is inflated and fed into an AlertDialog.Builder .
+             This builder will add the "OK" and "Cancel" buttons.
+    -->
 </LinearLayout>
