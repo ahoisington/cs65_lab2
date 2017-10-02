@@ -51,12 +51,8 @@ public class AuthActivity extends Activity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 Log.d("TEXT", "beforeTextChanged: '" + s.toString() + "'");
                 checkmark.setVisibility(View.INVISIBLE); // no checkmark yet
-
             }
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                b.setAlpha(1f);
-//                b.setClickable(true);
-
                 checkmark.setVisibility(View.INVISIBLE); // no checkmark yet
                 // check if password is correct
                 if(confirmPassword(firstPassword, tp.getText().toString()) == true) {

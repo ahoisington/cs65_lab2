@@ -419,6 +419,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveClicked(View v){
 
         // validate fields. check that handle, name, and password are not empty
+        if (handle != null && password != null && fullName !=null){
+            onSaveClickedSP(v); // save text to shared preferences
+        }
 
         onSaveClickedSP(v); // save text to shared preferences
 
