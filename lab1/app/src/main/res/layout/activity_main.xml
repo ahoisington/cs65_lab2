@@ -19,14 +19,14 @@
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
-        <!-- <Button
+            
+        <Button
             android:id="@+id/account_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/toolbar"
             android:layout_alignParentRight="true"
-            android:text="@string/account_label" /> -->
+            android:text="@string/account_label"/>
         <Button
             android:id="@+id/clear_button"
             android:layout_width="wrap_content"
@@ -34,6 +34,8 @@
             android:layout_below="@id/toolbar"
             android:layout_alignParentRight="true"
             android:text="@string/clear_label"
+            android:clickable="false"
+            android:enabled="false"
             android:onClick="onClearText"/>
 
         <TextView
