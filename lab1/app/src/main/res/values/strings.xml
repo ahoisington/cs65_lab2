@@ -6,5 +6,8 @@
     <string name="full_name_label">Full name (private, not listed):</string>
     <string name="password_label">Choose a password:</string>
     <string name="picture_label">Picture (optional):</string>
+    <string name="password_auth_label">Retype your password to confirm:</string>
+    <string name="password_auth_match_label">Matches?</string>
+    <string name="password_auth_submit_button">Submit</string>
 
 </resources>
