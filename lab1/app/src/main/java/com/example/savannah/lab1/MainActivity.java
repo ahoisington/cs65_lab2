@@ -1,16 +1,25 @@
+/**
+ *   This activity holds the bulk of the UI for creating a user profile.
+ *   Stores profile info with internal storage
+ *   Clearing fields with Clear button
+ *
+ *   Based on Android guides and the following examples:
+ *   activity example: http://www.cs.dartmouth.edu/~sergey/cs65/examples/Dialog/
+ *   internal storage: http://www.cs.dartmouth.edu/~sergey/cs65/examples/StorageOptions/
+ *   camera: http://www.cs.dartmouth.edu/~sergey/cs65/examples/SimpleCam/
+ *   permissions: http://www.cs.dartmouth.edu/~sergey/cs65/examples/KittyDownload/
+ */
+
 package com.example.savannah.lab1;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -29,22 +38,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-/**
- *   This activity holds the bulk of the UI for creating a user profile.
- *   Stores profile info with internal storage
- *   Clearing fields with Clear button
- *
- *   Based on Android guides and the following examples:
- *   activity example: http://www.cs.dartmouth.edu/~sergey/cs65/examples/Dialog/
- *   internal storage: http://www.cs.dartmouth.edu/~sergey/cs65/examples/StorageOptions/
- *   camera: http://www.cs.dartmouth.edu/~sergey/cs65/examples/SimpleCam/
- *   permissions: http://www.cs.dartmouth.edu/~sergey/cs65/examples/KittyDownload/
- */
 
 public class MainActivity extends AppCompatActivity {
 
     // for photo
-    private static final int REQUEST_IMAGE_CAPTURE = 1; // used to take pic, when cam button clicked
     Bitmap photoBitmap;
     ImageView photoImageView;
 
@@ -58,7 +55,12 @@ public class MainActivity extends AppCompatActivity {
     public static String SHARED_PREF = "my_sharedpref"; // where we are storing profile text
     public String mInstance = "";
 
-    /********************************** Activity Lifecycle *******************************/
+    //  request code for permissions
+    private static final int REQUEST_ALL_PERMISSIONS = 1; // request code for all permissions together
+    //private static final int REQUEST_EXTERNAL_STORAGE = 0;
+    private static final int REQUEST_IMAGE_CAPTURE = 1; // used to take pic, when cam button clicked
+
+    /********************** Activity Lifecycle ***************************/
     // get camera permissions, initialize, and restore shared preferences
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +76,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // check permissions and initialize views
+    // initialize views
     @Override protected void onStart(){
         Log.d("CYCLE", "onStart");
         super.onStart();
-
-        // check permissions
-        checkPermissions();
 
         // initialize toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -96,18 +95,25 @@ public class MainActivity extends AppCompatActivity {
         if( photoBitmap != null)
             photoImageView.setImageBitmap(photoBitmap);
 
+        System.out.println("before shared prefs " + handle.getText());
+
         //Restore preferences
         SharedPreferences sp = getSharedPreferences(SHARED_PREF, 0); // get settings
         handle.setText(sp.getString("handle","")); // get handle from sp and display it
         fullName.setText(sp.getString("fullName","")); // get handle from sp and display it
         password.setText(sp.getString("password","")); // get handle from sp and display it
 
+        System.out.println("after shared prefs " + handle.getText());
     }
 
-
+    // check permsissions
     @Override protected void onResume(){
         Log.d("CYCLE", "onResume");
         super.onResume();
+
+        // check permissions
+        checkPermissions();
+
     }
 
     @Override protected void onPause(){
@@ -127,33 +133,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /*********************** Camera permissions *********************/
+    /************ Permissions: Camera & External Storage **********/
 
-    // called in onStart
+    // called in onStart. check if we have permissions for external storage and camera
     protected void checkPermissions(){
-        // Check if we have permission to access camera
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            // we don't have permission. ask for permission and show permissions dialog
-            Log.d("PERM", "requesting permission");
 
-            ActivityCompat.requestPermissions( this,
-                    new String[]{Manifest.permission.CAMERA},
-                    REQUEST_IMAGE_CAPTURE);
+        // put permissions in an array to pass to ActivityCompat together
+        String[] permissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+        // For each permission, check if granted
+        for (String permission : permissions) {
+
+            if (ContextCompat.checkSelfPermission(this, permission)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // we don't have permission. ask for permission and show permissions dialog
+                Log.d("PERM", "requesting permission");
+
+                ActivityCompat.requestPermissions( this, permissions, REQUEST_ALL_PERMISSIONS);
+            }
         }
+
     }
 
-    // Shows toast saying whether camera permission was granted or not
+
+    // Shows toast saying whether permission was granted or not
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Log.d( "PERM", "in onRequestPermissionsResult");
         switch (requestCode) {
-            case REQUEST_IMAGE_CAPTURE:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+            case REQUEST_ALL_PERMISSIONS:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
-
-                } else {
+                 } else {
                     Toast.makeText(MainActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -165,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
     /********* keeps phone flipping from messing up ImageView **********/
 
-    /*
+
     // invoked when the activity may be temporarily destroyed, save the instance state here
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -185,9 +196,9 @@ public class MainActivity extends AppCompatActivity {
         photoBitmap = savedInstanceState.getParcelable("IMG");
         photoImageView.setImageBitmap(photoBitmap);
     }
-*/
 
-    /********************************** Taking photo *******************************/
+
+    /******************** Taking photo ********************/
     // takes photo when camera button clicked
     // The Android Camera application encodes the photo in the return Intent delivered to
     // onActivityResult() as a small Bitmap in the extras, under the key "data".
@@ -215,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /********************************** Saving Profile *******************************/
+    /***************** Saving Profile *********************/
     // save button was clicked. validate fields and save entered information
     protected void onSaveClicked(View v){
 
@@ -223,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
 
         onSaveClickedSP(v); // save text to shared preferences
 
-        // save photo to internal storage
+        // save photo to external storage
     }
 
     // save the entered text into shared preferences
@@ -307,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
     */
 
 
-    /********************************** Clearing Profile *******************************/
+    /******************** Clearing Profile ********************/
     /* clears all entered data to default when clear button is pressed */
     protected void onClearText(View v) {
         handle.setText("");

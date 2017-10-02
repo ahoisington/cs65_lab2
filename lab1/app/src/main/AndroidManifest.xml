@@ -9,6 +9,8 @@
     <!--App requires camera, so restrict app's visibility to devices with camera in Google Play -->
     <uses-feature android:name="android.hardware.camera.front" android:required="true"/>
 
+    <!--Request permission to store to external storage -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
