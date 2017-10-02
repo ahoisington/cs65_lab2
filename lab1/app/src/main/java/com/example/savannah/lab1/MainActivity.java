@@ -308,10 +308,10 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == ACTIVITY_REQ_CODE) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                String name = data.getStringExtra("USERNAME");
+                //String name = data.getStringExtra("USERNAME");
                 String pass = data.getStringExtra("PASSWORD");
 
-                Toast.makeText(this, "Got " + name + "/" + pass,
+                Toast.makeText(this, "Got " + pass,
                         Toast.LENGTH_LONG).show();
 
             }
@@ -321,6 +321,7 @@ public class MainActivity extends AppCompatActivity {
     /******** Activity dialog  ********/
     public void showAuthActivity(View view) {
         Intent i = new Intent(this, AuthActivity.class);
+        i.putExtra("firstPassword", password.getText().toString());
         startActivityForResult(i, ACTIVITY_REQ_CODE);
     }
 
@@ -357,6 +358,8 @@ public class MainActivity extends AppCompatActivity {
         handle.setText("");
         fullName.setText("");
         password.setText("");
+
+        photoImageView.setImageResource(android.R.drawable.ic_menu_camera);
 
         // clear shared preferences: fields are blank, store blank values into shared prefs
         onSaveClickedSP(v);

@@ -7,6 +7,7 @@ package com.example.savannah.lab1;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 /**
@@ -23,11 +25,15 @@ import android.widget.Toast;
 
 public class AuthActivity extends Activity {
 
+    private String firstPassword;
+
     @Override
     protected void onCreate(Bundle savedState){
         super.onCreate(savedState);
 
         setContentView(R.layout.activity_auth);
+
+        firstPassword = getIntent().getStringExtra("firstPassword");
 
         final Button b = findViewById(R.id.button_done);
         //b.setAlpha(.3f);
@@ -35,6 +41,7 @@ public class AuthActivity extends Activity {
         b.setEnabled(false);
 
         final EditText tp = findViewById(R.id.passwd);
+        final ImageView checkmark = findViewById(R.id.green_check);;
 
          // enabling done button
         tp.addTextChangedListener(new TextWatcher() {
@@ -43,12 +50,22 @@ public class AuthActivity extends Activity {
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 Log.d("TEXT", "beforeTextChanged: '" + s.toString() + "'");
+                checkmark.setVisibility(View.INVISIBLE); // no checkmark yet
 
             }
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 //                b.setAlpha(1f);
 //                b.setClickable(true);
-                b.setEnabled(true);
+
+                checkmark.setVisibility(View.INVISIBLE); // no checkmark yet
+                // check if password is correct
+                if(confirmPassword(firstPassword, tp.getText().toString()) == true) {
+
+                    // display the green checkmark
+                    checkmark.setVisibility(View.VISIBLE);
+                    checkmark.setImageResource(R.drawable.check);
+                    b.setEnabled(true);
+                }
             }
         });
 
@@ -66,18 +83,21 @@ public class AuthActivity extends Activity {
         });
 
 
-
         // catch Enter typed in this box
         tp.setOnKeyListener(new View.OnKeyListener() {
+
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 // If the event is a key-down event on the "enter" button
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     // Perform action on key press
-                    Toast.makeText(AuthActivity.this,
-                            tp.getText(),
-                            Toast.LENGTH_SHORT).show();
-                    return true;
+
+                        Toast.makeText(AuthActivity.this,
+                                tp.getText(),
+                                Toast.LENGTH_SHORT).show();
+                        return true;
+                    //}
+
                 }
                 return false;
             }
@@ -88,9 +108,18 @@ public class AuthActivity extends Activity {
     public void authEntryDone(View view){
         EditText tp = findViewById(R.id.passwd);
         Intent r = new Intent();
-        r.putExtra("PASSWORD", tp.getText().toString() );
+        //r.putExtra("PASSWORD", tp.getText().toString() );
+        r.putExtra("PASSWORD", "matched" );
         setResult(RESULT_OK, r);
         finish();
+    }
+
+    // check if passwords are same
+    public boolean confirmPassword(String firstPassword, String secondPassword){
+        if(firstPassword.equals(secondPassword)) {
+            return true;
+        }
+        return false;
     }
 
 
